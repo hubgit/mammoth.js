@@ -24,7 +24,8 @@
     "argparse": "~1.0.3",
     "jszip": "~2.5.0",
     "xmlbuilder": "~2.6.4",
-    "path-is-absolute": "^1.0.0"
+    "path-is-absolute": "^1.0.0",
+    "omml2mathml": "^1.1.0"
   },
   "devDependencies": {
     "mocha": "~2.2.5",
