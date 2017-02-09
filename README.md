@@ -338,11 +338,6 @@ Converts the source document to HTML.
     such as those used by bookmarks, footnotes and endnotes.
     Defaults to an empty string.
 
-  * `transformDocument`: if set,
-    this function is applied to the document read from the docx file before the conversion to HTML.
-    The API for document transforms should be considered unstable.
-    See [document transforms](#document-transforms).
-
 * Returns a promise containing a result.
   This result has the following properties:
 
@@ -389,84 +384,6 @@ mammoth.images.imgElement(function(image) {
         };
     });
 })
-```
-
-### Document transforms
-
-**The API for document transforms should be considered unstable,
-and may change between any versions.
-If you rely on this behaviour,
-you should pin to a specific version of mammoth.js,
-and test carefully before updating.**
-
-Mammoth allows a document to be transformed before it is converted.
-For instance,
-suppose that document has not been semantically marked up,
-but you know that any centre-aligned paragraph should be a heading.
-You can use the `transformDocument` argument to modify the document appropriately:
-
-```javascript
-function transformElement(element) {
-    if (element.children) {
-        var children = _.map(element.children, transformElement);
-        element = {...element, children: children};
-    }
-
-    if (element.type === "paragraph") {
-        element = transformParagraph(element);
-    }
-
-    return element;
-}
-
-function transformParagraph(element) {
-    if (element.alignment === "center" && !element.styleId) {
-        return {...element, styleId: "Heading2"};
-    } else {
-        return element;
-    }
-}
-
-var options = {
-    transformDocument: transformElement
-};
-```
-
-The return value of `transformDocument` is used during HTML generation.
-
-The above can be written more succinctly using the helper `mammoth.transforms.paragraph`:
-
-```javascript
-function transformParagraph(element) {
-    if (element.alignment === "center" && !element.styleId) {
-        return {...element, styleId: "Heading2"};
-    } else {
-        return element;
-    }
-}
-
-var options = {
-    transformDocument: mammoth.transforms.paragraph(transformParagraph)
-};
-```
-
-#### `mammoth.transforms.paragraph(transformParagraph)`
-
-Returns a function that can be used as the `transformDocument` option.
-This will apply the function `transformParagraph` to each paragraph element.
-`transformParagraph` should return the new paragraph.
-
-#### `mammoth.transforms.getDescendants(element)`
-
-Gets all descendants of an element.
-
-#### `mammoth.transforms.getDescendantsOfType(element, type)`
-
-Gets all descendants of a particular type of an element.
-For instance, to get all runs within an element `paragraph`:
-
-```javascript
-var runs = mammoth.transforms.getDescendantsOfType(paragraph, "run");
 ```
 
 ## Writing style maps
@@ -687,19 +604,6 @@ prefer:
 
 ```p[style-name='Aside Heading'] => h1```
 
-#### Document transforms
-
-Prior to 0.3.0,
-Mammoth (misleadingly) assigned the style ID to a property called `styleName`.
-The style ID is now assigned to a more appropriate property, `styleId`.
-The `styleName` property is now set to the name of the style.
-To preserve existing behaviour,
-any existing document transforms should be rewritten in one of two ways:
-
-* Set the `styleId` property instead of the `styleName` property
-
-* Set the `styleName` property to the name of the style, rather than the ID
-
 ### 0.2.0
 
 The function `mammoth.style()` was renamed to `mammoth.styleMapping()`.
@@ -707,10 +611,6 @@ The function `mammoth.style()` was renamed to `mammoth.styleMapping()`.
 ## Acknowledgements
 
 Thanks to the following people for their contributions to Mammoth:
-
-* [Craig Leinoff](https://github.com/Offlein):
-
-  * Document transforms
 
 * [John McLear](https://github.com/JohnMcLear):
 

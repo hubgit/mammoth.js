@@ -106,35 +106,6 @@ test('options are passed to document converter when calling mammoth.convertToHtm
     });
 });
 
-test('options.transformDocument is used to transform document if set', function() {
-    var docxFile = createFakeDocxFile({
-        "word/document.xml": testData("simple/word/document.xml")
-    });
-    var options = {
-        transformDocument: function(document) {
-            document.children[0].styleId = "Heading1";
-            return document;
-        }
-    };
-    return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
-        assert.equal("<h1>Hello.</h1>", result.value);
-    });
-});
-
-test('mammoth.transforms.paragraph only transforms paragraphs', function() {
-    var docxFile = createFakeDocxFile({
-        "word/document.xml": testData("simple/word/document.xml")
-    });
-    var options = {
-        transformDocument: mammoth.transforms.paragraph(function(paragraph) {
-            return _.extend(paragraph, {styleId: "Heading1"});
-        })
-    };
-    return mammoth.convertToHtml({file: docxFile}, options).then(function(result) {
-        assert.equal("<h1>Hello.</h1>", result.value);
-    });
-});
-
 test('inline images referenced by path relative to part are included in output', function() {
     var docxPath = path.join(__dirname, "test-data/tiny-picture.docx");
     return mammoth.convertToHtml({path: docxPath}).then(function(result) {
