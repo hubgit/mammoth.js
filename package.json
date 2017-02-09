@@ -2,14 +2,12 @@
   "name": "mammoth",
   "version": "1.3.2",
   "author": "Michael Williamson <mike@zwobble.org>",
-  "description": "Convert Word documents from docx to simple HTML and Markdown",
+  "description": "Convert Word documents from docx to simple HTML",
   "keywords": [
     "docx",
     "html",
     "office",
-    "word",
-    "markdown",
-    "md"
+    "word"
   ],
   "main": "./lib/index.js",
   "repository": {

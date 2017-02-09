@@ -81,76 +81,6 @@ test('style map can be expressed as array of style mappings', function() {
     });
 });
 
-test('embedded style map is used if present', function() {
-    var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
-    return mammoth.convertToHtml({path: docxPath}).then(function(result) {
-        assert.equal(result.value, "<h1>Walking on imported air</h1>");
-        assert.deepEqual(result.messages, []);
-    });
-});
-
-test('explicit style map takes precedence over embedded style map', function() {
-    var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
-    var options = {
-        styleMap: ["p => p"]
-    };
-    return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
-        assert.equal(result.value, "<p>Walking on imported air</p>");
-        assert.deepEqual(result.messages, []);
-    });
-});
-
-test('explicit style map is combined with embedded style map', function() {
-    var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
-    var options = {
-        styleMap: ["r => strong"]
-    };
-    return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
-        assert.equal(result.value, "<h1><strong>Walking on imported air</strong></h1>");
-        assert.deepEqual(result.messages, []);
-    });
-});
-
-test('embedded style maps can be disabled', function() {
-    var docxPath = path.join(__dirname, "test-data/embedded-style-map.docx");
-    var options = {
-        includeEmbeddedStyleMap: false
-    };
-    return mammoth.convertToHtml({path: docxPath}, options).then(function(result) {
-        assert.equal(result.value, "<p>Walking on imported air</p>");
-        assert.deepEqual(result.messages, []);
-    });
-});
-
-test('embedded style map can be written and then read', function() {
-    var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-    return promises.nfcall(fs.readFile, docxPath)
-        .then(function(buffer) {
-            return mammoth.embedStyleMap({buffer: buffer}, "p => h1");
-        })
-        .then(function(docx) {
-            return mammoth.convertToHtml({buffer: docx.toBuffer()});
-        })
-        .then(function(result) {
-            assert.equal(result.value, "<h1>Walking on imported air</h1>");
-            assert.deepEqual(result.messages, []);
-        });
-});
-
-test('embedded style map can be retrieved', function() {
-    var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-    return promises.nfcall(fs.readFile, docxPath)
-        .then(function(buffer) {
-            return mammoth.embedStyleMap({buffer: buffer}, "p => h1");
-        })
-        .then(function(docx) {
-            return mammoth.readEmbeddedStyleMap({buffer: docx.toBuffer()});
-        })
-        .then(function(styleMap) {
-            assert.equal(styleMap, "p => h1");
-        });
-});
-
 test('warning if style mapping is not understood', function() {
     var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
     var options = {
@@ -390,34 +320,6 @@ test('using styleMapping throws error', function() {
         );
     }
 });
-
-test('can convert single paragraph to markdown', function() {
-    var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-    return mammoth.convertToMarkdown({path: docxPath}).then(function(result) {
-        assert.equal(result.value, "Walking on imported air\n\n");
-        assert.deepEqual(result.messages, []);
-    });
-});
-
-test('extractRawText only retains raw text', function() {
-    var docxPath = path.join(__dirname, "test-data/simple-list.docx");
-    return mammoth.extractRawText({path: docxPath}).then(function(result) {
-        assert.equal(result.value, 'Apple\n\nBanana\n\n');
-    });
-});
-
-test('extractRawText can use .docx files represented by a Buffer', function() {
-    var docxPath = path.join(__dirname, "test-data/single-paragraph.docx");
-    return promises.nfcall(fs.readFile, docxPath)
-        .then(function(buffer) {
-            return mammoth.extractRawText({buffer: buffer});
-        })
-        .then(function(result) {
-            assert.equal(result.value, "Walking on imported air\n\n");
-            assert.deepEqual(result.messages, []);
-        });
-});
-
 
 test('should throw error if file is not a valid docx document', function() {
     var docxPath = path.join(__dirname, "test-data/empty.zip");

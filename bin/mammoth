@@ -25,7 +25,7 @@ outputGroup.addArgument(["--output-dir"], {
 
 parser.addArgument(["--output-format"], {
     defaultValue: "html",
-    choices: ["html", "markdown"],
+    choices: ["html"],
     help: "Output format."
 });
 
